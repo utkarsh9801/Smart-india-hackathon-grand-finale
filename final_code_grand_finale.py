@@ -4,6 +4,7 @@ import requests  # for api's
 import speech_recognition as sr  # pip install speechRecognition
 from twilio.rest import Client  # install twilio for sending sms
 from colorama import Fore, Back
+
 MaxIter = 5  # max number of iterations in loop
 
 engine = pyttsx3.init()  # object creation
@@ -29,7 +30,7 @@ def speak(audio: str):
     :param audio:  string
     :return:       None
     """
-    print(Fore.LIGHTYELLOW_EX+audio)  # print the string
+    print(Fore.LIGHTYELLOW_EX + audio)  # print the string
     engine.say(audio)  # speak the string
     engine.runAndWait()  # run the engine
     print(Fore.RESET)  # reset the color
@@ -186,33 +187,58 @@ def random_phone_number():
 
 def create_payment(roll_number, user_certificate_choice, name, aadhaar_Number):
     iterate = 0
+    global yes
     api_url = "https://bexbph1r7b.execute-api.us-west-2.amazonaws.com/default/insert_payment_details?roll_number={roll_number}&certificate={user_certificate_choice}&name={name}&amount={amount}&code={code}&adhaar={aadhaar_Number}"
     while iterate < MaxIter:
         try:
             # generate unique code
             amount = price[user_certificate_choice]
-            speak(f"You need to pay rupees {amount} ")
+            speak("How many copies do you need")
+            copies = takeCommand()
+
+            copies.replace(" ", "")
+            # if copies.isalpha():
+            #     raise(Exception)
+            if 'ee' in copies:
+                copies = 3
+            elif 'ne' in copies:
+                copies = 1
+            elif copies in ['two', 'Tu', 'tu', 2, '2'] or 't' in copies:
+                copies = 2
+            copies = int(copies)
+            speak(f"Do you need {copies} copies")
+            take_command = takeCommand()
+            if take_command in yes:
+                pass
+            else:
+                continue
+            prices = amount * copies
+            speak(f"You need to pay rupees {prices} ")
             code = generate_uniq_code()
-            speak("Your unique payment code is: " + str(code))
-            speak("use this code to pay on UPI 1 2 3 pay on your phone using number pad to pay on the portal")
+            speak("pay on UPI 1 2 3 pay on your phone using number pad to pay on the portal by clicking *99#")
             speak("We are also sending this code on your SMS ")
             # generate phone number
             # phone = random_phone_number()
             # generate sms code
             # todo: uncomment the below line
             # generateSMS(code, phone)
+
             response = requests.get(
                 api_url.format(roll_number=roll_number, user_certificate_choice=user_certificate_choice, name=name,
-                               amount=amount, code=code, aadhaar_Number=aadhaar_Number))
+                               amount=prices, code=code, aadhaar_Number=aadhaar_Number))
             print(response.text)
             return True
-
         except Exception as e:
+            speak("Sorry I didn't get please try again")
             print(e)
             iterate += 1
+    speak("You have crossed maximum reattempts, please try again later")
+    endCall()
 
 
-print(create_payment('9138168','twelth', 'utkarsh2', '9283983'))
+# print(create_payment('********12', 'twelth', 'important', '9283983'))
+
+
 def authenticateDB(adhaar):
     """
     This function is used to authenticate the user with new Document.
@@ -232,13 +258,12 @@ def authenticateDB(adhaar):
         while iterate < 3:
             speak("Please enter your OTP")
             otp = takeCommand()
-            #remove non number digit
-            temp=""
+            # remove non number digit
+            temp = ""
             for i in otp:
                 if i.isdigit():
-                    temp+=i
+                    temp += i
             otp = temp
-
 
             otp = otp.replace(" ", "")
             otp = otp.lower()
@@ -406,6 +431,7 @@ def main():
     :param: None
     :return: adhaar number and Validation  (string)
     """
+
     global language, docType
     wishMe()
     phone = random_phone_number()
@@ -429,7 +455,14 @@ def main():
         tenth = auth_data['tenth']
         twelth = auth_data['twelth']
         speak(f"Welcome {name} you have been successfully authenticated")
+        speak(f" Enter your respective board")
+        board = takeCommand()
+        speak(f" Enter your School code")
+        school_code = takeCommand()
+
         user_certificate_choice = ask_certificate(tenth=tenth, twelth=twelth)
+        # asking school code
+
         roll_number = search_certificate_in_db(user_certificate_choice, aadhaar_Number)
         print(f"Roll Number is {roll_number}")
         if create_payment(roll_number, user_certificate_choice, name, aadhaar_Number):
@@ -441,7 +474,6 @@ def main():
             speak("unknown error")
             endCall()
 
+
 if __name__ == '__main__':
     main()
-
-
