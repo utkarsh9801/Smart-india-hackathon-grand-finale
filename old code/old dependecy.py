@@ -1,3 +1,8 @@
+"""
+Author:  Utkarsh Gupta
+Date:    20th July 2022
+"""
+
 
 def SearchInFile(docNumber, TobeSearched):
     """

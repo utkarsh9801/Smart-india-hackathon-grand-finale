@@ -1,30 +1,23 @@
+"""
+Author:  Utkarsh Gupta
+Date:    11 August 2022
+"""
 import datetime  # for timestamp
 import pyttsx3  # pip install pyttsx3
 import requests  # for api's
 import speech_recognition as sr  # pip install speechRecognition
-from twilio.rest import Client  # install twilio for sending sms
 from colorama import Fore, Back
+from constants import *
+from twilioSetup import *
 
 MaxIter = 5  # max number of iterations in loop
 
 engine = pyttsx3.init()  # object creation
+
 voices = engine.getProperty('voices')  # getting details of current voice
-# print(voices[1].id)                 # printing first voice
 engine.setProperty('voice', voices[0].id)  # setting up voice
-english = 'en-in'  # setting up language
-hindi = 'hi-in'  # setting up language
-language = 'en-in'  # setting up language
-yes = ['yes', 'yeah', 'yup', 'yep', 'y', 'ok', 'okay', 'sure', 'okie', 'okie dokie', 'okie dokie', 'guess',
-       'yes yes']  # yes
-no = ['no', 'nope', 'nah', 'n', 'nope', 'nahi', 'nahi hua', 'nahi hua hai', 'nahi hua hai']  # no
-docType = ''  # variable to store document type
-account_sid = 'ACbdec4ccbe7604045ba9dae6638c76c13'  # twilio account id
-auth_token = 'd5f315f94e64ccf91122ec64a9cf7742'  # twilio auth token
-client = Client(account_sid, auth_token)  # twilio client object
-price = {'aadhar': 100, 'pan': 200, 'ration': 300, 'tenth': 500, 'twelth': 2000}  # price of documents
 
-
-def speak(audio: str):
+def speak(audio: str) -> None:
     """
     This function takes a string as input and speaks it out
     :param audio:  string
@@ -36,7 +29,7 @@ def speak(audio: str):
     print(Fore.RESET)  # reset the color
 
 
-def wishMe():
+def wishMe() -> None:
     """
     This function wishes the user according to the time of the day
     :return:    None
@@ -59,7 +52,7 @@ def wishMe():
         pass
 
 
-def takeCommand():
+def takeCommand() -> str:
     """
     This function takes microphone input from the user and returns string output
     :return:    string
@@ -87,7 +80,7 @@ def takeCommand():
     return query
 
 
-def ask_language():
+def ask_language() -> None:
     """
     This function is used to ask the user to select the language
     :param: None
@@ -152,7 +145,7 @@ def endCall():
     exit()
 
 
-def generate_uniq_code():
+def generate_uniq_code() :
     """
     This function is used to generate a unique code
     :param: None

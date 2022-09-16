@@ -1,3 +1,8 @@
+"""
+Author:  Utkarsh Gupta
+Date:    11 August 2022
+"""
+
 import datetime  # for timestamp
 import pyttsx3  # pip install pyttsx3
 import requests  # for api's
